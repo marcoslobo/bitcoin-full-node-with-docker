@@ -1,19 +1,19 @@
 services:
-  tor:
-    image: tor:$TOR_VERSION
-    build:
-      context: ./tor
-      args:
-        - TOR_VERSION=$TOR_VERSION
-        - TOR_USER_ID=$TOR_USER_ID
-        - GROUP_ID=$SHARED_GID
-    volumes:
-      - $TOR_DATA:/home/tor
-    restart: on-failure
-    networks:
-      default:
-        ipv4_address: 172.18.0.2
-  i2p:
+  # tor:
+  #   image: tor:$TOR_VERSION
+  #   build:
+  #     context: ./tor
+  #     args:
+  #       - TOR_VERSION=$TOR_VERSION
+  #       - TOR_USER_ID=$TOR_USER_ID
+  #       - GROUP_ID=$SHARED_GID
+  #   volumes:
+  #     - $TOR_DATA:/home/tor
+  #   restart: on-failure
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.18.0.2
+  # i2p:
     image: i2p:$I2P_VERSION
     profiles:
       - disabled
@@ -35,8 +35,8 @@ services:
         ipv4_address: 172.18.0.3
   bitcoind:
     image: bitcoind:$BITCOIN_VERSION
-    depends_on:
-      - tor
+    # depends_on:
+    #   - tor
     build:
       context: ./bitcoind
       args:
