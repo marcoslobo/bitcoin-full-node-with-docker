@@ -39,11 +39,14 @@ FROM debian:stable-slim
 ARG BITCOIN_USER_ID
 ARG GROUP_ID
 COPY --from=build /tmp/bitcoin/src/bitcoind /usr/local/bin/bitcoind
-RUN getent group ${GROUP_ID} > /dev/null 2>&1 || addgroup --gid ${GROUP_ID} bitcoin \
-  && if ! getent group bitcoin > /dev/null 2>&1; then addgroup --gid ${GROUP_ID} bitcoin; fi \
-  && adduser -u ${BITCOIN_USER_ID} --disabled-password --gecos "" --ingroup $(getent group ${GROUP_ID} | cut -d: -f1) bitcoin \
-  && mkdir -p /home/bitcoin/.bitcoin \
-  && chown bitcoin:$(getent group ${GROUP_ID} | cut -d: -f1) /home/bitcoin/.bitcoin
+
+# Simplified group and user setup
+RUN groupadd -g ${GROUP_ID} bitcoin || \
+    groupmod -n bitcoin $(getent group ${GROUP_ID} | cut -d: -f1) || \
+    groupadd bitcoin && \
+    useradd -u ${BITCOIN_USER_ID} -g $(getent group bitcoin | cut -d: -f1) -s /bin/bash -m -d /home/bitcoin bitcoin && \
+    mkdir -p /home/bitcoin/.bitcoin && \
+    chown -R bitcoin:bitcoin /home/bitcoin/.bitcoin
 
 USER bitcoin
 
