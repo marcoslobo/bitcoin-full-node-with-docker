@@ -39,10 +39,10 @@ FROM debian:stable-slim
 ARG BITCOIN_USER_ID
 ARG GROUP_ID
 COPY --from=build /tmp/bitcoin/src/bitcoind /usr/local/bin/bitcoind
-RUN addgroup --gid ${GROUP_ID} bitcoin \
-  && adduser -u ${BITCOIN_USER_ID} --disabled-password --gecos "" --ingroup bitcoin bitcoin \
-  && mkdir /home/bitcoin/.bitcoin \
-  && chown bitcoin:bitcoin /home/bitcoin/.bitcoin
+# RUN addgroup --gid ${GROUP_ID} bitcoin \
+#   && adduser -u ${BITCOIN_USER_ID} --disabled-password --gecos "" --ingroup bitcoin bitcoin \
+#   && mkdir /home/bitcoin/.bitcoin \
+#   && chown bitcoin:bitcoin /home/bitcoin/.bitcoin
 
 USER bitcoin
 
