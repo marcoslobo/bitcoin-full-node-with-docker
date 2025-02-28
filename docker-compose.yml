@@ -43,6 +43,7 @@ services:
         - GROUP_ID=$SHARED_GID
     volumes:
       - $BITCOIN_DATA:/home/bitcoin/.bitcoin
+      - ./bitcoind/bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf:ro
     restart: unless-stopped
     networks:
       default:
