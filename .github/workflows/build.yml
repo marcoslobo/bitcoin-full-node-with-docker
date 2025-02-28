@@ -1,0 +1,17 @@
+name: daily build
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 0 * * *
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Build default images
+        run: docker compose --env-file .env.example build
+      - name: Build disabled images
+        run: docker compose --env-file .env.example --profile disabled build
+      - name: List images
+        run: docker images
