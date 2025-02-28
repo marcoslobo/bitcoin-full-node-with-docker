@@ -35,8 +35,6 @@ services:
     #     ipv4_address: 172.18.0.3
   bitcoind:
     image: bitcoind:$BITCOIN_VERSION
-    # depends_on:
-    #   - tor
     build:
       context: ./bitcoind
       args:
@@ -49,6 +47,13 @@ services:
     networks:
       default:
         ipv4_address: 172.18.0.4
+    # Add this to fix permissions before starting bitcoind
+    user: root
+    entrypoint: >
+      bash -c "chown -R bitcoin:bitcoin /home/bitcoin/.bitcoin &&
+      su -c 'bitcoind -chain=$$BITCOIN_NETWORK' bitcoin"
+    environment:
+      - BITCOIN_NETWORK=${BITCOIN_NETWORK:-testnet4}
   electrs:
     image: electrs:$ELECTRS_VERSION
     depends_on:
