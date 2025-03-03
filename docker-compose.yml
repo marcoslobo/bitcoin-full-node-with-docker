@@ -46,23 +46,28 @@ services:
     restart: unless-stopped
     networks:
       default:
+      
   electrs:
-    image: mempool/electrs  
+    image: electrs:$ELECTRS_VERSION
     depends_on:
       - bitcoind
+    build:
+      context: ./electrs
+      args:
+        - ELECTRS_VERSION=$ELECTRS_VERSION
+        - ELECTRS_USER_ID=$ELECTRS_USER_ID
+        - GROUP_ID=$SHARED_GID
+    user: "${ELECTRS_USER_ID}:${SHARED_GID}"  # Explicitly set user
     volumes:
-      - electrs_data:/electrs
-      - ~/var/lib/docker/volumes/bitcoind-data:/root/.bitcoin:ro
-    entrypoint:
-      -  /bin/electrs
-    command: |
-      --address-search      
-      --db-dir /electrs
-      --cors '*'
-      --cookie="lobo_dev:lobo123lobo"  
+      - $BITCOIN_DATA:/home/electrs/.bitcoin
+      - $ELECTRS_DATA:/home/electrs/.electrs
     restart: on-failure
     networks:
       default:
+    entrypoint: >
+      sh -c "mkdir -p /home/electrs/.electrs/db && 
+             chown -R ${ELECTRS_USER_ID}:${SHARED_GID} /home/electrs/.electrs && 
+             exec electrs --conf ~/.electrs/electrs.conf"
 
   # btcrpcexplorer:
   #   image: btcrpcexplorer:$BTC_RPC_EXPLORER_VERSION
