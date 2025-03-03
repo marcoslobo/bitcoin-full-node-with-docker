@@ -48,26 +48,21 @@ services:
       default:
       
   electrs:
-    image: electrs:$ELECTRS_VERSION
+    container_name: electrs
     depends_on:
       - bitcoind
-    build:
-      context: ./electrs
-      args:
-        - ELECTRS_VERSION=$ELECTRS_VERSION
-        - ELECTRS_USER_ID=$ELECTRS_USER_ID
-        - GROUP_ID=$SHARED_GID
-    user: "${ELECTRS_USER_ID}:${SHARED_GID}"  # Explicitly set user
+    build: 
+      context: ./
+      args: 
+        VERSION: "v0.10.8" #electrs version
+    image: mu373/docker-electrs
     volumes:
-      - $BITCOIN_DATA:/home/electrs/.bitcoin
-      - $ELECTRS_DATA:/home/electrs/.electrs
-    restart: on-failure
-    networks:
-      default:
-    entrypoint: >
-      sh -c "mkdir -p /home/electrs/.electrs/db && 
-             chown -R ${ELECTRS_USER_ID}:${SHARED_GID} /home/electrs/.electrs &&
-             su electrs -c 'electrs --conf ~/.electrs/electrs.conf'"
+      - ./config.toml:/data/.electrs/config.toml #electrs configuration file
+      - ./electrs-data:/electrs/data #electrs database
+    restart: always
+    ports:
+      # Port 50001 does not have to be exposed to the host when using nginx reverse proxy for SSL connection
+      - 50001:50001 #Mainnet RPC
 
   # btcrpcexplorer:
   #   image: btcrpcexplorer:$BTC_RPC_EXPLORER_VERSION
