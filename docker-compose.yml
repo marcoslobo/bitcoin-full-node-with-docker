@@ -66,8 +66,8 @@ services:
       default:
     entrypoint: >
       sh -c "mkdir -p /home/electrs/.electrs/db && 
-             chown -R ${ELECTRS_USER_ID}:${SHARED_GID} /home/electrs/.electrs && 
-             exec electrs --conf ~/.electrs/electrs.conf"
+             chown -R ${ELECTRS_USER_ID}:${SHARED_GID} /home/electrs/.electrs &&
+             su electrs -c 'electrs --conf ~/.electrs/electrs.conf'"
 
   # btcrpcexplorer:
   #   image: btcrpcexplorer:$BTC_RPC_EXPLORER_VERSION
