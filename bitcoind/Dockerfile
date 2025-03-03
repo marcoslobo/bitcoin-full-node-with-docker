@@ -50,4 +50,4 @@ RUN groupadd -g ${GROUP_ID} bitcoin || \
 
 USER bitcoin
 
-CMD bitcoind -chain=testnet4
+CMD bitcoind 
