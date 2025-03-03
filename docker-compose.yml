@@ -47,18 +47,19 @@ services:
     networks:
       default:
   electrs:
-    image: electrs:$ELECTRS_VERSION
+    image: mempool/electrs  
     depends_on:
       - bitcoind
-    build:
-      context: ./electrs
-      args:
-        - ELECTRS_VERSION=$ELECTRS_VERSION
-        - ELECTRS_USER_ID=$ELECTRS_USER_ID
-        - GROUP_ID=$SHARED_GID
     volumes:
-      - $BITCOIN_DATA:/home/electrs/.bitcoin
-      - $ELECTRS_DATA:/home/electrs/.electrs
+      - electrs_data:/electrs
+      - ~/var/lib/docker/volumes/bitcoind-data:/root/.bitcoin:ro
+    entrypoint:
+      -  /bin/electrs
+    command: |
+      --address-search      
+      --db-dir /electrs
+      --cors '*'
+      --cookie="lobo_dev:lobo123lobo"  
     restart: on-failure
     networks:
       default:
